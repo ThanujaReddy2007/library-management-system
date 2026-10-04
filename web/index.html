@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Library Management System</title>
+  <meta name="description" content="A premium Library Management System to manage books, students, issue and return books with ease." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-icon">📚</span>
+      <span class="logo-text">LibraryMS</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-item active" id="nav-dashboard" onclick="showPage('dashboard')">
+        <span class="nav-icon">🏠</span><span class="nav-label">Dashboard</span>
+      </button>
+      <button class="nav-item" id="nav-books" onclick="showPage('books')">
+        <span class="nav-icon">📖</span><span class="nav-label">Books</span>
+      </button>
+      <button class="nav-item" id="nav-students" onclick="showPage('students')">
+        <span class="nav-icon">🎓</span><span class="nav-label">Students</span>
+      </button>
+      <button class="nav-item" id="nav-issue" onclick="showPage('issue')">
+        <span class="nav-icon">📤</span><span class="nav-label">Issue Book</span>
+      </button>
+      <button class="nav-item" id="nav-return" onclick="showPage('return')">
+        <span class="nav-icon">📥</span><span class="nav-label">Return Book</span>
+      </button>
+    </nav>
+
+
+  </aside>
+
+  <!-- ══════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════ -->
+  <main class="main">
+
+    <!-- Top Header -->
+    <header class="topbar">
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-search">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="global-search" placeholder="Search books, students…" oninput="handleGlobalSearch(this.value)" />
+      </div>
+      <div class="topbar-stats">
+        <span class="stat-badge" id="badge-books">📚 0 Books</span>
+        <span class="stat-badge" id="badge-students">🎓 0 Students</span>
+      </div>
+    </header>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- ── PAGE: DASHBOARD ── -->
+    <section class="page active" id="page-dashboard">
+      <div class="dashboard-grid">
+        <div class="dash-card" onclick="showPage('books')">
+          <div class="dash-card-icon">📚</div>
+          <div class="dash-card-body">
+            <div class="dash-card-value" id="dash-total-books">0</div>
+            <div class="dash-card-label">Total Books</div>
+          </div>
+        </div>
+        <div class="dash-card" onclick="showPage('students')">
+          <div class="dash-card-icon">🎓</div>
+          <div class="dash-card-body">
+            <div class="dash-card-value" id="dash-total-students">0</div>
+            <div class="dash-card-label">Students</div>
+          </div>
+        </div>
+        <div class="dash-card green" onclick="showPage('books')">
+          <div class="dash-card-icon">✅</div>
+          <div class="dash-card-body">
+            <div class="dash-card-value" id="dash-available">0</div>
+            <div class="dash-card-label">Available</div>
+          </div>
+        </div>
+        <div class="dash-card red" onclick="showPage('books')">
+          <div class="dash-card-icon">📤</div>
+          <div class="dash-card-body">
+            <div class="dash-card-value" id="dash-issued">0</div>
+            <div class="dash-card-label">Issued</div>
+          </div>
+        </div>
+      </div>
+
+      <h2 class="section-title">Recently Added Books</h2>
+      <div class="book-grid" id="dash-recent-books">
+        <div class="empty-state">No books yet. <button class="link-btn" onclick="showPage('books')">Add your first book →</button></div>
+      </div>
+    </section>
+
+    <!-- ── PAGE: BOOKS ── -->
+    <section class="page" id="page-books">
+      <div class="page-header">
+        <h1>Books</h1>
+        <button class="btn-primary" onclick="openModal('modal-add-book')">+ Add Book</button>
+      </div>
+
+      <div class="filter-bar">
+        <button class="filter-btn active" id="filter-all" onclick="filterBooks('all')">All</button>
+        <button class="filter-btn" id="filter-available" onclick="filterBooks('available')">Available</button>
+        <button class="filter-btn" id="filter-issued" onclick="filterBooks('issued')">Issued</button>
+      </div>
+
+      <div class="book-grid" id="book-grid">
+        <div class="empty-state">No books added yet.</div>
+      </div>
+    </section>
+
+    <!-- ── PAGE: STUDENTS ── -->
+    <section class="page" id="page-students">
+      <div class="page-header">
+        <h1>Students</h1>
+        <button class="btn-primary" onclick="openModal('modal-add-student')">+ Add Student</button>
+      </div>
+      <div class="student-list" id="student-list">
+        <div class="empty-state">No students registered yet.</div>
+      </div>
+    </section>
+
+    <!-- ── PAGE: ISSUE BOOK ── -->
+    <section class="page" id="page-issue">
+      <div class="page-header"><h1>Issue Book</h1></div>
+      <div class="form-card">
+        <p class="form-desc">Select a student and an available book to issue.</p>
+        <div class="form-group">
+          <label for="issue-student">Student</label>
+          <select id="issue-student"><option value="">— Select Student —</option></select>
+        </div>
+        <div class="form-group">
+          <label for="issue-book">Book</label>
+          <select id="issue-book"><option value="">— Select Book —</option></select>
+        </div>
+        <button class="btn-primary full-width" onclick="issueBook()">📤 Issue Book</button>
+      </div>
+      <h2 class="section-title" style="margin-top:2rem">Currently Issued Books</h2>
+      <div class="issued-list" id="issued-list">
+        <div class="empty-state">No books currently issued.</div>
+      </div>
+    </section>
+
+    <!-- ── PAGE: RETURN BOOK ── -->
+    <section class="page" id="page-return">
+      <div class="page-header"><h1>Return Book</h1></div>
+      <div class="form-card">
+        <p class="form-desc">Select a student to see their issued book and return it.</p>
+        <div class="form-group">
+          <label for="return-student">Student</label>
+          <select id="return-student" onchange="populateReturnBook()"><option value="">— Select Student —</option></select>
+        </div>
+        <div class="form-group">
+          <label for="return-book">Book to Return</label>
+          <select id="return-book"><option value="">— No book issued —</option></select>
+        </div>
+        <button class="btn-success full-width" onclick="returnBook()">📥 Return Book</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ══════════════════════════════════════════
+       MODALS
+  ══════════════════════════════════════════ -->
+
+  <!-- Add Book Modal -->
+  <div class="modal-overlay" id="modal-add-book" onclick="closeModalOnOverlay(event, 'modal-add-book')">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Add New Book</h2>
+        <button class="modal-close" onclick="closeModal('modal-add-book')">✕</button>
+      </div>
+      <div class="form-group">
+        <label for="book-id">Book ID</label>
+        <input type="number" id="book-id" placeholder="e.g. 101" />
+      </div>
+      <div class="form-group">
+        <label for="book-title">Title</label>
+        <input type="text" id="book-title" placeholder="e.g. Java Programming" />
+      </div>
+      <div class="form-group">
+        <label for="book-author">Author</label>
+        <input type="text" id="book-author" placeholder="e.g. Herbert Schildt" />
+      </div>
+      <div class="modal-actions">
+        <button class="btn-ghost" onclick="closeModal('modal-add-book')">Cancel</button>
+        <button class="btn-primary" onclick="addBook()">Add Book</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Student Modal -->
+  <div class="modal-overlay" id="modal-add-student" onclick="closeModalOnOverlay(event, 'modal-add-student')">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Register New Student</h2>
+        <button class="modal-close" onclick="closeModal('modal-add-student')">✕</button>
+      </div>
+      <div class="form-group">
+        <label for="student-id">Student ID</label>
+        <input type="number" id="student-id" placeholder="e.g. 201" />
+      </div>
+      <div class="form-group">
+        <label for="student-name">Name</label>
+        <input type="text" id="student-name" placeholder="e.g. Ravi Kumar" />
+      </div>
+      <div class="modal-actions">
+        <button class="btn-ghost" onclick="closeModal('modal-add-student')">Cancel</button>
+        <button class="btn-primary" onclick="addStudent()">Register</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
